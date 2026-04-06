@@ -4,7 +4,7 @@ import { BackgroundMesh } from "@/components/layout/BackgroundMesh";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen bg-transparent relative z-0">
+    <div className="flex h-[100dvh] bg-transparent relative z-0">
       <BackgroundMesh />
       <Sidebar />
       <main className="flex-1 overflow-hidden relative">

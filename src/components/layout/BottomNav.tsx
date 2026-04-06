@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MessageSquare, LayoutDashboard, Settings, LogOut } from "lucide-react";
@@ -16,7 +17,7 @@ const items = [
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -34,6 +35,7 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className="relative flex flex-col items-center justify-center w-full h-full"
             >
               <div className="relative p-2">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { MessageSquare, LayoutDashboard, Settings, Brain, LogOut } from "lucide-react";
@@ -16,7 +17,7 @@ const items = [
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -27,7 +28,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-72 border-r border-white/20 dark:border-white/10 bg-white/30 dark:bg-black/20 backdrop-blur-2xl z-20 shadow-[4px_0_24px_-10px_rgba(0,0,0,0.1)]">
       <div className="p-8">
-        <Link href="/" className="flex items-center gap-3 font-extrabold text-2xl text-foreground/90 tracking-tight">
+        <Link href="/" prefetch={true} className="flex items-center gap-3 font-extrabold text-2xl text-foreground/90 tracking-tight">
           <motion.div
             whileHover={{ rotate: 180 }}
             transition={{ duration: 0.4 }}
@@ -46,6 +47,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className="block relative"
             >
               {isActive && (

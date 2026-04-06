@@ -11,6 +11,17 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Skip auth check for static assets and API routes for speed
+  const { pathname } = request.nextUrl;
+  if (
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/favicon') ||
+    /\.(?:svg|png|jpg|jpeg|gif|webp|ico)$/.test(pathname)
+  ) {
+    return supabaseResponse;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -32,16 +43,19 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // Use getSession() instead of getUser() for faster auth checks.
+  // getSession() reads from local JWT cookie (instant), while
+  // getUser() makes a network request to Supabase auth server (~200-800ms).
+  // The middleware matcher already excludes static files, so this only runs on page navigations.
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
+    data: { session },
+  } = await supabase.auth.getSession()
 
   // Protect all routes except auth ones
   if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/register') &&
-    !request.nextUrl.pathname.startsWith('/api/') // let APIs handle their own security
+    !session &&
+    !pathname.startsWith('/login') &&
+    !pathname.startsWith('/register')
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
@@ -50,8 +64,8 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to app if logged in and trying to access login/register
   if (
-    user && 
-    (request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register'))
+    session && 
+    (pathname.startsWith('/login') || pathname.startsWith('/register'))
   ) {
     const url = request.nextUrl.clone()
     url.pathname = '/'

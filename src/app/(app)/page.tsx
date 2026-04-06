@@ -109,7 +109,7 @@ export default function ChatPage() {
         </div>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6 pt-8 scroll-smooth">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6 pt-8 scroll-smooth pb-[120px] md:pb-8">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div
@@ -158,8 +158,8 @@ export default function ChatPage() {
         </AnimatePresence>
       </div>
 
-      <div className="bg-white/40 dark:bg-black/20 backdrop-blur-2xl border-t border-white/20 dark:border-white/10 p-3 md:p-4 safe-area-pb sticky bottom-0 z-20 w-full flex flex-col items-center">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-4xl w-full relative">
+      <div className="bg-white/40 dark:bg-black/20 backdrop-blur-2xl border-t border-white/20 dark:border-white/10 p-3 md:p-4 z-20 w-full flex flex-col items-center shrink-0">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3 max-w-4xl w-full relative z-10">
           <AnimatePresence>
             {selectedImage && (
               <motion.div 
@@ -225,6 +225,8 @@ export default function ChatPage() {
             </motion.button>
           </div>
         </form>
+        {/* Espaçador flexível exclusivo para mobile que "estica" o campo de vidro para terminar abaixo da BottomNav */}
+        <div className="h-[76px] md:hidden shrink-0 w-full pb-safe" />
       </div>
     </div>
   );
