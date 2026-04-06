@@ -44,7 +44,7 @@ export default async function DashboardPage(props: {
   const incomes = transactions?.filter(t => t.type === 'income').reduce((acc, curr) => acc + Number(curr.amount), 0) || 0;
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto h-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
+    <div className="p-6 md:p-10 max-w-6xl mx-auto min-h-full space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-10">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90 mix-blend-plus-darker dark:mix-blend-plus-lighter">Dashboard</h1>
       </div>

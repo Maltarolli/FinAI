@@ -33,7 +33,7 @@ export default function SettingsPage() {
   if (!mounted) return null;
 
   return (
-    <div className="p-6 md:p-10 max-w-4xl mx-auto h-full space-y-8 animate-in fade-in duration-500 pb-24">
+    <div className="p-6 md:p-10 max-w-4xl mx-auto min-h-full space-y-8 animate-in fade-in duration-500 pb-10">
       <div>
         <h1 className="text-4xl font-extrabold tracking-tight text-foreground/90 mix-blend-plus-darker dark:mix-blend-plus-lighter">Configurações</h1>
         <p className="text-muted-foreground/80 mt-2 font-medium text-lg">Gerencie sua conta e aparência do App.</p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { 
   PieChart, Pie, Cell, Tooltip as RechartsTooltip, 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend 
@@ -19,6 +19,9 @@ type Transaction = {
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#a855f7', '#ec4899', '#f43f5e', '#14b8a6'];
 
 export function TransactionCharts({ transactions }: { transactions: Transaction[] }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   // 1. Gráfico de Categorias (Apenas Gastos)
   const categoryData = useMemo(() => {
     const expenses = transactions.filter(t => t.type === 'expense');
@@ -68,7 +71,7 @@ export function TransactionCharts({ transactions }: { transactions: Transaction[
     return Object.values(chronologicalGrouped);
   }, [transactions]);
 
-  if (!transactions || transactions.length === 0) {
+  if (!mounted || !transactions || transactions.length === 0) {
     return null;
   }
 
@@ -83,9 +86,9 @@ export function TransactionCharts({ transactions }: { transactions: Transaction[
         className="rounded-3xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-black/20 backdrop-blur-xl p-6 shadow-xl shadow-black/5"
       >
         <h3 className="text-lg font-bold text-foreground/90 mb-6">Gastos por Categoria</h3>
-        <div className="h-64 w-full">
+        <div className="w-full">
           {categoryData.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height={256}>
               <PieChart>
                 <Pie
                   data={categoryData}
@@ -122,8 +125,8 @@ export function TransactionCharts({ transactions }: { transactions: Transaction[
         className="rounded-3xl border border-white/20 dark:border-white/10 bg-white/40 dark:bg-black/20 backdrop-blur-xl p-6 shadow-xl shadow-black/5"
       >
         <h3 className="text-lg font-bold text-foreground/90 mb-6">Fluxo no Tempo</h3>
-        <div className="h-64 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-full">
+          <ResponsiveContainer width="100%" height={256}>
             <BarChart data={timeData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
               <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#888' }} dy={10} />
