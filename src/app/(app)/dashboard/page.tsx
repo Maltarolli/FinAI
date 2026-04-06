@@ -91,9 +91,9 @@ export default async function DashboardPage(props: {
                        <span className="text-xs text-muted-foreground/70">{new Date(tx.created_at).toLocaleDateString('pt-BR')}</span>
                     </div>
                   </div>
-                  <div className={`font-black text-xl tracking-tight ${tx.type === 'expense' ? 'text-red-500/90' : 'text-emerald-500/90'}`}>
-                    {tx.type === 'expense' ? '-' : '+'}
-                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tx.amount)}
+                  <div className={`flex items-center gap-1 font-black text-xl tracking-tight whitespace-nowrap ${tx.type === 'expense' ? 'text-red-500/90' : 'text-emerald-500/90'}`}>
+                    <span>{tx.type === 'expense' ? '-' : '+'}</span>
+                    <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(tx.amount)}</span>
                   </div>
                 </div>
               ))}
