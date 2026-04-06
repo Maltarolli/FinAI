@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, Loader2, Camera, X } from "lucide-react";
+import { Send, Bot, Loader2, Camera, X, Image as ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,8 +24,10 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -59,7 +61,8 @@ export default function ChatPage() {
     setMessages(newMessages);
     setInput("");
     setSelectedImage(null);
-    if(fileInputRef.current) fileInputRef.current.value = "";
+    if(galleryInputRef.current) galleryInputRef.current.value = "";
+    if(cameraInputRef.current) cameraInputRef.current.value = "";
     setIsLoading(true);
 
     try {
@@ -169,7 +172,11 @@ export default function ChatPage() {
                 <img src={selectedImage} alt="Preview" className="h-20 w-auto rounded-xl object-cover" />
                 <button 
                   type="button" 
-                  onClick={() => { setSelectedImage(null); if(fileInputRef.current) fileInputRef.current.value = ""; }}
+                  onClick={() => { 
+                    setSelectedImage(null); 
+                    if(galleryInputRef.current) galleryInputRef.current.value = ""; 
+                    if(cameraInputRef.current) cameraInputRef.current.value = ""; 
+                  }}
                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 shadow-md hover:scale-110"
                 >
                   <X size={14} />
@@ -183,14 +190,22 @@ export default function ChatPage() {
               type="file" 
               accept="image/*" 
               className="hidden" 
-              ref={fileInputRef} 
+              ref={galleryInputRef} 
+              onChange={handleImagePicker} 
+            />
+            <input 
+              type="file" 
+              accept="image/*" 
+              capture="environment"
+              className="hidden" 
+              ref={cameraInputRef} 
               onChange={handleImagePicker} 
             />
             
             <motion.button 
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               type="button" 
-              onClick={() => fileInputRef.current?.click()}
+              onClick={() => setIsPickerOpen(true)}
               className="p-4 rounded-full flex-shrink-0 transition-all bg-white/50 dark:bg-white/5 text-muted-foreground/80 hover:text-foreground shadow-sm border border-white/30 dark:border-white/10"
             >
               <Camera className="w-6 h-6 stroke-[2.5]" />
@@ -228,6 +243,65 @@ export default function ChatPage() {
         {/* Espaçador flexível exclusivo para mobile que "estica" o campo de vidro para terminar abaixo da BottomNav */}
         <div className="h-[76px] md:hidden shrink-0 w-full pb-safe" />
       </div>
+
+      <AnimatePresence>
+        {isPickerOpen && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsPickerOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-sm bg-background p-6 rounded-t-3xl sm:rounded-3xl shadow-2xl flex flex-col gap-5 border border-white/20 dark:border-white/10 mb-0 sm:mb-8"
+            >
+              <div className="w-12 h-1.5 bg-muted rounded-full mx-auto opacity-50 sm:hidden" />
+              <h3 className="text-xl font-extrabold text-foreground text-center">Adicionar Foto</h3>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <button 
+                  type="button"
+                  onClick={() => {
+                    cameraInputRef.current?.click();
+                    setIsPickerOpen(false);
+                  }}
+                  className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-muted/40 hover:bg-muted/80 active:scale-95 transition-all outline-none"
+                >
+                  <div className="p-4 bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 rounded-full shadow-inner">
+                    <Camera className="w-8 h-8 stroke-[2]" />
+                  </div>
+                  <span className="font-bold text-sm text-foreground/90">Câmera</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    galleryInputRef.current?.click();
+                    setIsPickerOpen(false);
+                  }}
+                  className="flex flex-col items-center justify-center gap-3 p-5 rounded-2xl bg-muted/40 hover:bg-muted/80 active:scale-95 transition-all outline-none"
+                >
+                  <div className="p-4 bg-blue-500/15 text-blue-600 dark:text-blue-400 rounded-full shadow-inner">
+                    <ImageIcon className="w-8 h-8 stroke-[2]" />
+                  </div>
+                  <span className="font-bold text-sm text-foreground/90">Galeria</span>
+                </button>
+              </div>
+              <button 
+                type="button"
+                onClick={() => setIsPickerOpen(false)}
+                className="mt-2 w-full py-4 rounded-2xl font-bold text-muted-foreground hover:bg-muted/60 transition-colors"
+              >
+                Cancelar
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
